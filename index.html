@@ -174,6 +174,45 @@ h3{font-size:var(--fs-h3);line-height:1.25;letter-spacing:-.02em}
 .prod__specs li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;
   border-radius:50%;background:var(--accent);opacity:.75}
 
+/* ── Quantity stepper ────────────────────────────────────────────────
+   Buttons plus a real number input: the buttons are the fast path, the
+   input is the one that works for someone typing 500. */
+.qty{margin-top:1.25rem;padding-top:1.125rem;border-top:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.qty__label{font-size:var(--fs-label);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);font-weight:500}
+.qty__ctrl{display:flex;align-items:center;gap:.375rem}
+.qty__btn{width:44px;height:44px;display:grid;place-items:center;border-radius:6px;
+  border:1px solid var(--rule);background:var(--surface-2);font-size:1.125rem;line-height:1;
+  color:var(--fg);transition:border-color .2s,background .2s}
+.qty__btn:hover:not(:disabled){border-color:var(--soft);background:#20202A}
+.qty__btn:disabled{opacity:.35;cursor:not-allowed}
+.qty__in{width:72px;height:44px;text-align:center;border-radius:6px;border:1px solid var(--rule);
+  background:var(--surface-2);color:var(--fg);font:500 1rem/1 var(--sans);
+  font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.qty__in::-webkit-outer-spin-button,.qty__in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.qty__in:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.qty__line{margin-top:.75rem;font-size:.875rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.qty__line b{color:var(--fg);font-weight:600}
+
+/* ── Order summary ───────────────────────────────────────────────────── */
+.order{background:var(--surface);border:1px solid var(--rule);border-radius:10px;
+  padding:clamp(1.125rem,2.4vw,1.5rem);margin-bottom:1.5rem}
+.order__t{font-family:var(--display);font-weight:600;font-size:1rem;margin-bottom:.875rem}
+.order__empty{font-size:.9375rem;color:var(--muted)}
+.order__empty a{color:var(--accent);text-decoration:underline}
+.order__lines{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.875rem}
+.order__lines li{display:flex;justify-content:space-between;gap:1rem;font-size:.9375rem;
+  color:var(--soft);font-variant-numeric:tabular-nums}
+.order__ship{display:flex;justify-content:space-between;gap:1rem;font-size:.875rem;
+  color:var(--muted);padding-top:.75rem;border-top:1px solid var(--rule)}
+.order__total{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+  padding-top:.75rem;margin-top:.5rem;border-top:1px solid var(--rule)}
+.order__total span{font-size:.9375rem;color:var(--soft)}
+.order__total b{font-family:var(--display);font-size:1.375rem;font-weight:700;color:var(--accent);
+  font-variant-numeric:tabular-nums}
+.order__note{margin-top:.75rem;font-size:.8125rem;color:var(--muted);line-height:1.5}
+
 /* ─────────────────────────────  USES  ───────────────────────────── */
 .uses__head{grid-column:1/span 7;margin-bottom:clamp(2.5rem,5vw,3.5rem)}
 .uses{grid-column:1/span 12;display:grid;grid-template-columns:repeat(4,1fr);
@@ -393,6 +432,16 @@ h3{font-size:var(--fs-h3);line-height:1.25;letter-spacing:-.02em}
             <li data-i18n="pd.1.s3">Surface mate gravable au laser</li>
             <li data-i18n="pd.1.s4">Pour l'accès, le paiement et les badges</li>
           </ul>
+          <div class="qty">
+            <label class="qty__label" for="q-nfc-card-black" data-i18n="qty.label">Quantité</label>
+            <div class="qty__ctrl">
+              <button class="qty__btn" type="button" data-step="-1" data-for="nfc-card-black" aria-label="Retirer un">&minus;</button>
+              <input class="qty__in" id="q-nfc-card-black" type="number" min="0" max="100000" step="1" value="0"
+                     data-sku="nfc-card-black" inputmode="numeric" aria-describedby="line-nfc-card-black">
+              <button class="qty__btn" type="button" data-step="1" data-for="nfc-card-black" aria-label="Ajouter un">+</button>
+            </div>
+          </div>
+          <p class="qty__line" id="line-nfc-card-black" data-line="nfc-card-black" aria-live="polite"></p>
         </div>
       </article>
 
@@ -420,6 +469,16 @@ h3{font-size:var(--fs-h3);line-height:1.25;letter-spacing:-.02em}
             <li data-i18n="pd.2.s3">Disponible en vrac ou en petite quantité</li>
             <li data-i18n="pd.2.s4">Pour l'inventaire, l'automatisation et les points de contact</li>
           </ul>
+          <div class="qty">
+            <label class="qty__label" for="q-nfc-tag-white" data-i18n="qty.label">Quantité</label>
+            <div class="qty__ctrl">
+              <button class="qty__btn" type="button" data-step="-1" data-for="nfc-tag-white" aria-label="Retirer un">&minus;</button>
+              <input class="qty__in" id="q-nfc-tag-white" type="number" min="0" max="100000" step="1" value="0"
+                     data-sku="nfc-tag-white" inputmode="numeric" aria-describedby="line-nfc-tag-white">
+              <button class="qty__btn" type="button" data-step="1" data-for="nfc-tag-white" aria-label="Ajouter un">+</button>
+            </div>
+          </div>
+          <p class="qty__line" id="line-nfc-tag-white" data-line="nfc-tag-white" aria-live="polite"></p>
         </div>
       </article>
     </div>
@@ -591,25 +650,34 @@ h3{font-size:var(--fs-h3);line-height:1.25;letter-spacing:-.02em}
         </div>
       </div>
 
-      <div class="frow">
-        <div class="fld" data-field="product">
-          <label for="f-product" data-i18n="f.product">Produit</label>
-          <!-- option VALUES stay English so submitted data is stable in both
-               languages; only the visible labels are translated. -->
-          <select id="f-product" name="product" required aria-describedby="e-product">
-            <option value="" data-i18n="f.choose">Choisissez…</option>
-            <option value="Black NFC Cards" data-i18n="f.optCards">Cartes NFC noires</option>
-            <option value="White NFC Tags" data-i18n="f.optTags">Étiquettes NFC blanches</option>
-            <option value="Both" data-i18n="f.optBoth">Les deux</option>
-            <option value="Not sure" data-i18n="f.optUnsure">Je ne sais pas encore</option>
-          </select>
-          <span class="fld__err" id="e-product"></span>
+      <!-- Order summary. Mirrors the steppers on the product cards so the
+           buyer never retypes what they already chose, and the exact order
+           travels with the message. -->
+      <div class="order" data-field="order">
+        <p class="order__t" data-i18n="or.title">Votre commande</p>
+
+        <p class="order__empty" id="orderEmpty">
+          <span data-i18n="or.empty">Aucun article choisi.</span>
+          <a href="#produits" data-i18n="or.pick">Choisir une quantité</a>
+        </p>
+
+        <div id="orderFilled" hidden>
+          <ul class="order__lines" id="orderLines"></ul>
+          <div class="order__ship">
+            <span data-i18n="or.ship">Livraison</span>
+            <span data-i18n="or.free">Incluse</span>
+          </div>
+          <div class="order__total">
+            <span data-i18n="or.total">Total estimé</span>
+            <b id="orderTotal" aria-live="polite">0,00&nbsp;$</b>
+          </div>
+          <p class="order__note" data-i18n="or.note">Montant indicatif. Nous confirmons le prix exact et le délai par courriel avant toute facturation.</p>
         </div>
-        <div class="fld" data-field="quantity">
-          <label for="f-qty" data-i18n="f.qty">Quantité approximative</label>
-          <input id="f-qty" name="quantity" type="text" inputmode="numeric" required aria-describedby="e-qty" placeholder="50, 500, 5000…">
-          <span class="fld__err" id="e-qty"></span>
-        </div>
+
+        <span class="fld__err" id="e-order"></span>
+        <!-- Carries the order into the submission in readable form. -->
+        <input type="hidden" name="order" id="orderField">
+        <input type="hidden" name="orderTotal" id="orderTotalField">
       </div>
 
       <div class="fld" data-field="notes">
@@ -685,6 +753,11 @@ document.addEventListener('DOMContentLoaded', function () {
     source: 'Site cartes NFC (bibo-saya-cards)',
   };
 
+  /* renderCart() is hoisted but the consts it closes over are not, so a
+     saved English preference could call applyLang before the cart exists
+     and hit a temporal-dead-zone error. This flag is the gate. */
+  let cartReady = false;
+
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ══════════════ COPY ══════════════
@@ -700,6 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
     'msg.mailto': 'Envoyer par courriel à la place',
     'msg.required': 'Ce champ est obligatoire.',
     'msg.email': 'Cette adresse courriel semble incorrecte.',
+    'msg.noItems': "Choisissez au moins un article avant d'envoyer.",
     'vid.play': 'Lire',
   };
 
@@ -771,10 +845,14 @@ document.addEventListener('DOMContentLoaded', function () {
     'ct.note': 'No payment now. We confirm the price and the lead time before any order.',
 
     'f.name': 'Full name', 'f.biz': 'Company', 'f.email': 'Email', 'f.phone': 'Phone',
-    'f.product': 'Product', 'f.choose': 'Choose one…',
-    'f.optCards': 'Black NFC cards', 'f.optTags': 'White NFC tags',
-    'f.optBoth': 'Both', 'f.optUnsure': 'Not sure yet',
-    'f.qty': 'Approximate quantity',
+    'qty.label': 'Quantity',
+    'or.title': 'Your order',
+    'or.empty': 'Nothing selected yet.',
+    'or.pick': 'Choose a quantity',
+    'or.ship': 'Shipping',
+    'or.free': 'Included',
+    'or.total': 'Estimated total',
+    'or.note': 'Indicative amount. We confirm the exact price and lead time by email before any invoice.',
     'f.notes': 'Intended use and reader model', 'f.optional': '(optional)',
     'f.notesPh': 'Access control, reader brand, logo engraving…',
     'f.send': 'Send request', 'f.sending': 'Sending…',
@@ -789,6 +867,7 @@ document.addEventListener('DOMContentLoaded', function () {
     'msg.mailto': 'Send it by email instead',
     'msg.required': 'This field is required.',
     'msg.email': 'That email address does not look right.',
+    'msg.noItems': 'Choose at least one item before sending.',
     'vid.play': 'Play',
 
     'ft.tag': 'Blank NFC cards and tags for access, payment and badge systems.',
@@ -852,6 +931,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const v = btn.closest('[data-vid]').querySelector('video');
       btn.querySelector('span').textContent = v && v.paused ? t('vid.play') : t('vid.pause');
     });
+
+    /* The cart holds product names and formats money per language
+       ("35,00 $" vs ".00"), so it must be redrawn on a swap: the
+       generic data-i18n pass cannot reach content built by script. */
+    if (cartReady) renderCart();
   }
 
   document.querySelectorAll('#langGroup button').forEach(function (b) {
@@ -864,6 +948,130 @@ document.addEventListener('DOMContentLoaded', function () {
   let saved = null;
   try { saved = localStorage.getItem('bsc-lang'); } catch (e) { /* ignore */ }
   if (saved === 'en') applyLang('en');
+
+  /* ══════════════ ORDER BUILDER ══════════════
+     Prices live here once, in integer cents. Floating point is not a money
+     type — 0.1 + 0.2 === 0.30000000000000004 — and a total that is a cent
+     off looks like carelessness on the one screen where trust matters.
+
+     This total is INDICATIVE. Nothing is charged from this page: the order
+     arrives by email and the real invoice is confirmed by hand. That is
+     what makes a browser-side total safe here — there is no amount for a
+     tampered value to influence. */
+  const PRODUCTS = {
+    'nfc-card-black': { cents: 3500, fr: 'Carte NFC noire mate', en: 'Matte black NFC card' },
+    'nfc-tag-white':  { cents: 1500, fr: 'Étiquette NFC blanche', en: 'White NFC tag' },
+  };
+
+  const MAX_QTY = 100000;
+
+  function money(cents) {
+    const v = (cents / 100).toFixed(2);
+    return lang === 'fr' ? v.replace('.', ',') + ' $' : '$' + v;
+  }
+
+  /* The card prices are written in the HTML so they survive with JS off.
+     That means two sources for one number, so verify they agree and shout
+     if they ever drift — silently charging one price and showing another
+     is the exact failure this guards. */
+  function auditPrices() {
+    document.querySelectorAll('.prod').forEach(function (card) {
+      const input = card.querySelector('[data-sku]');
+      const shown = card.querySelector('.prod__price');
+      if (!input || !shown) return;
+      const sku = input.dataset.sku;
+      const digits = shown.textContent.replace(/[^\d]/g, '');
+      if (PRODUCTS[sku] && digits && Number(digits) * 100 !== PRODUCTS[sku].cents) {
+        console.error('[price] ' + sku + ' shows "' + shown.textContent.trim()
+          + '" but PRODUCTS says ' + (PRODUCTS[sku].cents / 100) + ' — fix one of them.');
+      }
+    });
+  }
+
+  const qtyInputs = [...document.querySelectorAll('[data-sku]')];
+  const orderEmpty = document.getElementById('orderEmpty');
+  const orderFilled = document.getElementById('orderFilled');
+  const orderLines = document.getElementById('orderLines');
+  const orderTotal = document.getElementById('orderTotal');
+  const orderField = document.getElementById('orderField');
+  const orderTotalField = document.getElementById('orderTotalField');
+
+  function readCart() {
+    const cart = [];
+    qtyInputs.forEach(function (input) {
+      let q = parseInt(input.value, 10);
+      if (!Number.isFinite(q) || q < 0) q = 0;
+      if (q > MAX_QTY) q = MAX_QTY;
+      if (String(q) !== input.value) input.value = String(q);
+      if (q > 0) {
+        const p = PRODUCTS[input.dataset.sku];
+        cart.push({ sku: input.dataset.sku, qty: q, cents: p.cents * q, name: p[lang] || p.en });
+      }
+    });
+    return cart;
+  }
+
+  function renderCart() {
+    const cart = readCart();
+
+    /* Per-card line totals, next to the stepper that produced them. */
+    qtyInputs.forEach(function (input) {
+      const el = document.querySelector('[data-line="' + input.dataset.sku + '"]');
+      if (!el) return;
+      const q = parseInt(input.value, 10) || 0;
+      const p = PRODUCTS[input.dataset.sku];
+      el.innerHTML = q > 0
+        ? (lang === 'fr' ? 'Sous-total : <b>' : 'Subtotal: <b>') + money(p.cents * q) + '</b>'
+        : '';
+    });
+
+    /* Steppers cannot go below zero — disable rather than silently clamp,
+       so the control tells the truth about what it will do. */
+    document.querySelectorAll('[data-step="-1"]').forEach(function (btn) {
+      const input = document.getElementById('q-' + btn.dataset.for);
+      btn.disabled = !input || (parseInt(input.value, 10) || 0) <= 0;
+    });
+
+    const total = cart.reduce(function (s, l) { return s + l.cents; }, 0);
+    const empty = cart.length === 0;
+
+    orderEmpty.hidden = !empty;
+    orderFilled.hidden = empty;
+
+    if (!empty) {
+      orderLines.innerHTML = cart.map(function (l) {
+        return '<li><span>' + l.name + ' × ' + l.qty + '</span><span>' + money(l.cents) + '</span></li>';
+      }).join('');
+      orderTotal.textContent = money(total);
+    }
+
+    /* Readable order text for the email, plus the total as its own field. */
+    orderField.value = cart.length
+      ? cart.map(function (l) { return l.name + ' x ' + l.qty + ' = ' + money(l.cents); })
+          .join(' | ') + ' | ' + (lang === 'fr' ? 'TOTAL ' : 'TOTAL ') + money(total)
+      : '';
+    orderTotalField.value = cart.length ? money(total) : '';
+  }
+
+  qtyInputs.forEach(function (input) {
+    input.addEventListener('input', renderCart);
+    input.addEventListener('change', renderCart);
+  });
+
+  document.querySelectorAll('[data-step]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const input = document.getElementById('q-' + btn.dataset.for);
+      if (!input) return;
+      const step = Number(btn.dataset.step);
+      const now = parseInt(input.value, 10) || 0;
+      input.value = String(Math.min(MAX_QTY, Math.max(0, now + step)));
+      renderCart();
+    });
+  });
+
+  auditPrices();
+  renderCart();
+  cartReady = true;
 
   /* ══════════════ VIDEO ══════════════
      Sources are attached only when a clip is near the viewport: two 2.4 MB
@@ -1072,13 +1280,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function validateLocally(p) {
     const errors = {};
-    ['fullName', 'businessName', 'phone', 'quantity'].forEach(function (k) {
+    ['fullName', 'businessName', 'phone'].forEach(function (k) {
       if (!String(p[k] || '').trim()) errors[k] = t('msg.required');
     });
-    if (!String(p.product || '').trim()) errors.product = t('msg.required');
     const email = String(p.email || '').trim();
     if (!email) errors.email = t('msg.required');
     else if (!/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(email)) errors.email = t('msg.email');
+    /* An order with nothing in it is the one submission that helps nobody. */
+    if (!String(p.order || '').trim()) errors.order = t('msg.noItems');
     return errors;
   }
 
