@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bibo Saya Studio — Cartes NFC mates & étiquettes, prêtes à programmer</title>
+<meta name="description" id="metaDesc" content="Cartes NFC noires mates et étiquettes NFC blanches, vierges et prêtes à programmer. Pour vos systèmes d'accès, de paiement et de badges. Dès 15 $, rabais sur quantité.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap&subset=latin" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────  TOKENS  ─────────────────────────────
+   Deliberately a different world from the review-card site: that one is
+   warm paper and sienna, this one is near-black and cool. The product is
+   matte black hardware for access control — the page should feel like the
+   thing it sells. */
+:root{
+  --bg:#0B0B0C;
+  --surface:#131317;
+  --surface-2:#191920;
+  --fg:#FFFFFF;
+  --soft:#C3C3CC;      /* 11.9:1 on --bg */
+  --muted:#8E8E99;     /* 6.1:1  on --bg */
+  --rule:#26262E;
+  --accent:#7FB2FF;    /* 8.9:1 on --bg */
+  --accent-dim:rgba(127,178,255,.14);
+
+  --display:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  --fs-display:clamp(2.5rem,6.4vw,5.25rem);
+  --fs-h2:clamp(1.875rem,4vw,3rem);
+  --fs-h3:clamp(1.125rem,1.8vw,1.4375rem);
+  --fs-lead:clamp(1.0625rem,1.45vw,1.25rem);
+  --fs-label:.6875rem;
+
+  --gutter:clamp(1.25rem,5vw,4.5rem);
+  --section-y:clamp(5rem,12vh,9rem);
+  --max:1240px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font:400 1.0625rem/1.65 var(--sans);letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+h1,h2,h3,h4,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+svg,video{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--fg);color:var(--bg);
+  padding:.75rem 1.25rem;font-size:var(--fs-label);letter-spacing:.12em;text-transform:uppercase}
+.skip:focus{left:0}
+
+/* ─────────────────────────────  LAYOUT  ───────────────────────────── */
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:0 clamp(1rem,2.4vw,2rem)}
+section{padding-block:var(--section-y);position:relative}
+.hr{height:1px;background:var(--rule);border:0;margin:0}
+
+/* ─────────────────────────────  TYPE  ───────────────────────────── */
+.label{font-size:var(--fs-label);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);font-weight:500}
+.eyebrow{display:flex;align-items:center;gap:1rem;margin-bottom:clamp(1.75rem,3.5vw,2.75rem)}
+.eyebrow .rule{flex:1;height:1px;background:var(--rule)}
+
+h1,h2,h3,.disp{font-family:var(--display);font-weight:600}
+h1{font-size:var(--fs-display);line-height:1;letter-spacing:-.035em;text-wrap:balance}
+h2{font-size:var(--fs-h2);line-height:1.06;letter-spacing:-.03em;text-wrap:balance}
+h3{font-size:var(--fs-h3);line-height:1.25;letter-spacing:-.02em}
+.lead{font-size:var(--fs-lead);color:var(--soft);line-height:1.6;text-wrap:pretty}
+.em{color:var(--accent)}
+
+/* ─────────────────────────────  BUTTONS  ───────────────────────────── */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  min-height:52px;padding:0 1.75rem;border-radius:4px;font-size:.9375rem;font-weight:500;
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease)}
+.btn--solid{background:var(--accent);color:#08131F}
+.btn--solid:hover,.btn--solid:focus-visible{background:#A6C9FF}
+.btn--ghost{border:1px solid var(--rule);color:var(--fg)}
+.btn--ghost:hover,.btn--ghost:focus-visible{border-color:var(--soft);background:var(--surface)}
+
+.tlink{display:inline-block;position:relative;font-weight:500;padding-bottom:2px}
+.tlink::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+.tlink:hover::after,.tlink:focus-visible::after{transform:scaleX(1)}
+
+/* ─────────────────────────────  NAV  ───────────────────────────── */
+.nav{position:fixed;inset:0 0 auto;z-index:100;border-bottom:1px solid transparent;
+  transition:background .35s var(--ease),backdrop-filter .35s var(--ease),border-color .35s var(--ease)}
+.nav.is-stuck{background:rgba(11,11,12,.82);-webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);border-bottom-color:var(--rule)}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;min-height:74px}
+.mark{font-family:var(--display);font-size:1.0625rem;letter-spacing:-.02em;font-weight:600}
+.nav__right{display:flex;align-items:center;gap:clamp(.875rem,2.2vw,1.75rem)}
+.nav__links{display:flex;align-items:center;gap:clamp(1rem,2.4vw,2rem)}
+.nav__links a{font-size:.9375rem;color:var(--soft);transition:color .25s}
+.nav__links a:hover{color:var(--fg)}
+.nav__cta{min-height:44px;padding:0 1.0625rem;font-size:.875rem}
+
+.lang{display:flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.lang button{min-width:44px;min-height:44px;font:500 .6875rem/1 var(--sans);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s,background .2s}
+.lang button+button{border-left:1px solid var(--rule)}
+.lang button:hover{color:var(--fg)}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+.burger{display:none;width:44px;height:44px;align-items:center;justify-content:center}
+.burger span{display:block;width:22px;height:1px;background:var(--fg);position:relative;transition:transform .3s var(--ease)}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:22px;height:1px;
+  background:var(--fg);transition:transform .3s var(--ease),opacity .2s}
+.burger span::before{top:-6px}.burger span::after{top:6px}
+.burger[aria-expanded="true"] span{transform:rotate(45deg)}
+.burger[aria-expanded="true"] span::before{transform:translateY(6px) rotate(-90deg)}
+.burger[aria-expanded="true"] span::after{opacity:0}
+
+.sheet{position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;flex-direction:column;
+  justify-content:center;padding:var(--gutter);gap:.5rem;visibility:hidden;opacity:0;
+  transition:opacity .3s var(--ease),visibility .3s}
+.sheet.is-open{visibility:visible;opacity:1}
+.sheet a{font-family:var(--display);font-size:clamp(1.75rem,8vw,2.5rem);letter-spacing:-.03em;padding-block:.4rem}
+
+/* ─────────────────────────────  HERO  ───────────────────────────── */
+.hero{padding-top:clamp(7.5rem,17vh,11rem);padding-bottom:clamp(3.5rem,8vh,6rem)}
+.hero__copy{grid-column:1/span 7}
+.hero h1{margin-bottom:clamp(1.25rem,2.6vw,1.875rem)}
+.hero .lead{max-width:52ch}
+.hero__actions{display:flex;flex-wrap:wrap;gap:.875rem 1.25rem;margin-top:clamp(2rem,3.5vw,2.75rem)}
+.hero__note{margin-top:1.5rem}
+.hero__media{grid-column:9/span 4;align-self:center}
+
+/* ── Video framing ────────────────────────────────────────────────────
+   aspect-ratio reserves the box before metadata arrives, so nothing jumps
+   when the clip loads. */
+.vid{position:relative;aspect-ratio:16/9;border-radius:8px;overflow:hidden;
+  background:var(--surface);border:1px solid var(--rule)}
+.vid video{width:100%;height:100%;object-fit:cover}
+.vid__pause{position:absolute;right:.625rem;bottom:.625rem;z-index:2;
+  display:inline-flex;align-items:center;gap:.4375rem;
+  min-height:36px;padding:0 .75rem;border-radius:99px;
+  background:rgba(11,11,12,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.16);
+  font:500 .6875rem/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--fg);
+  opacity:.85;transition:opacity .25s}
+.vid__pause:hover,.vid__pause:focus-visible{opacity:1}
+
+/* ─────────────────────────────  PRODUCTS  ───────────────────────────── */
+.prod__head{grid-column:1/span 7;margin-bottom:clamp(2.5rem,5vw,3.75rem)}
+.prods{grid-column:1/span 12;display:grid;grid-template-columns:repeat(2,1fr);
+  gap:clamp(1.5rem,3vw,2.5rem)}
+.prod{display:flex;flex-direction:column;background:var(--surface);
+  border:1px solid var(--rule);border-radius:10px;overflow:hidden;
+  transition:border-color .35s var(--ease)}
+.prod:hover{border-color:#33333D}
+.prod .vid{border:0;border-radius:0;border-bottom:1px solid var(--rule)}
+.prod__body{padding:clamp(1.25rem,2.4vw,1.75rem);display:flex;flex-direction:column;flex:1}
+.prod__top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.prod__price{font-family:var(--display);font-weight:700;font-size:1.375rem;
+  color:var(--accent);white-space:nowrap;font-variant-numeric:tabular-nums}
+.prod__from{display:block;font:500 .625rem/1 var(--sans);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.3125rem;text-align:right}
+.prod__desc{margin-top:.75rem;color:var(--soft);font-size:.9375rem;line-height:1.6}
+.prod__specs{margin-top:1.25rem;padding-top:1.125rem;border-top:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:.5rem}
+.prod__specs li{position:relative;padding-left:1.125rem;font-size:.875rem;color:var(--muted);line-height:1.5}
+.prod__specs li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;
+  border-radius:50%;background:var(--accent);opacity:.75}
+
+/* ─────────────────────────────  USES  ───────────────────────────── */
+.uses__head{grid-column:1/span 7;margin-bottom:clamp(2.5rem,5vw,3.5rem)}
+.uses{grid-column:1/span 12;display:grid;grid-template-columns:repeat(4,1fr);
+  gap:clamp(1.25rem,2.4vw,2rem)}
+.use{padding-top:1.25rem;border-top:1px solid var(--rule)}
+.use__n{display:block;font-family:var(--display);font-size:.8125rem;color:var(--accent);
+  margin-bottom:.875rem;font-variant-numeric:tabular-nums}
+.use h3{margin-bottom:.5rem;font-size:1.0625rem}
+.use p{color:var(--muted);font-size:.875rem;line-height:1.55}
+
+/* ─────────────────────────────  BULK  ───────────────────────────── */
+.bulk{background:var(--surface)}
+.bulk__in{grid-column:1/span 12;display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
+.bulk h2{margin-bottom:1rem}
+.bulk p{color:var(--soft);max-width:46ch}
+.bulk__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.stat{padding:1.125rem;background:var(--surface-2);border:1px solid var(--rule);border-radius:8px}
+.stat b{display:block;font-family:var(--display);font-size:1.5rem;font-weight:700;
+  letter-spacing:-.02em;margin-bottom:.25rem}
+.stat span{font-size:.75rem;color:var(--muted);line-height:1.4;display:block}
+
+/* ─────────────────────────────  FAQ  ───────────────────────────── */
+.faq__head{grid-column:1/span 5}
+.faq__list{grid-column:7/span 6;border-top:1px solid var(--rule)}
+.faq__item{border-bottom:1px solid var(--rule)}
+.faq__q{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;width:100%;
+  text-align:left;padding:1.375rem 0;font-family:var(--display);font-size:1.0625rem;
+  font-weight:500;letter-spacing:-.015em;transition:color .25s}
+.faq__q:hover{color:var(--accent)}
+.faq__ico{position:relative;flex:none;width:13px;height:13px;margin-top:.45rem;transition:transform .35s var(--ease)}
+.faq__ico::before,.faq__ico::after{content:"";position:absolute;background:currentColor}
+.faq__ico::before{top:6px;left:0;width:13px;height:1px}
+.faq__ico::after{left:6px;top:0;width:1px;height:13px}
+.faq__q[aria-expanded="true"] .faq__ico{transform:rotate(45deg)}
+.faq__a{overflow:hidden}
+.faq__a p{padding:0 2.5rem 1.5rem 0;color:var(--muted);font-size:.9375rem;max-width:58ch}
+
+/* ─────────────────────────────  CONTACT  ───────────────────────────── */
+.contact__head{grid-column:1/span 5}
+.contact__head h2{margin-bottom:1rem}
+.contact__head .lead{max-width:34ch}
+.contact__note{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--rule);
+  font-size:.9375rem;color:var(--muted);max-width:34ch}
+.form{grid-column:7/span 6}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(1rem,2vw,1.5rem)}
+.fld{margin-bottom:1.125rem}
+.fld label{display:block;margin-bottom:.5rem;font-size:var(--fs-label);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);font-weight:500}
+.fld .opt{text-transform:none;letter-spacing:0;font-weight:400}
+.fld input,.fld select,.fld textarea{width:100%;padding:.8125rem .9375rem;
+  font:400 1rem/1.4 var(--sans);color:var(--fg);background:var(--surface);
+  border:1px solid var(--rule);border-radius:5px;transition:border-color .25s}
+.fld input:hover,.fld select:hover,.fld textarea:hover{border-color:#3A3A45}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--accent);
+  outline-offset:1px;border-color:var(--accent)}
+.fld textarea{min-height:104px;resize:vertical;line-height:1.6}
+.fld--bad input,.fld--bad select,.fld--bad textarea{border-color:#FF8A7A}
+.fld__err{display:none;margin-top:.4375rem;font-size:.8125rem;color:#FF9C8E}
+.fld--bad .fld__err{display:block}
+/* Off-screen, not type=hidden — bots skip hidden inputs but fill this. */
+.trap{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.form .btn{width:100%;margin-top:.375rem}
+.form .btn[disabled]{opacity:.55;cursor:progress}
+.note{margin-top:1.125rem;padding:.9375rem 1.125rem;border-radius:6px;font-size:.9375rem;
+  line-height:1.55;display:none}
+.note--ok{display:block;background:rgba(127,255,178,.09);border-left:2px solid #6FE0A0;color:#B6F2CE}
+.note--err{display:block;background:rgba(255,138,122,.09);border-left:2px solid #FF8A7A;color:#FFC2B8}
+.note a{text-decoration:underline;font-weight:500}
+.form__fine{margin-top:1.125rem;font-size:.8125rem;color:var(--muted);line-height:1.6}
+
+/* ─────────────────────────────  FOOTER  ───────────────────────────── */
+.foot{border-top:1px solid var(--rule);padding-block:clamp(3rem,6vw,4rem) 2.25rem}
+.foot__grid{display:grid;grid-template-columns:2fr 1fr 1.4fr;gap:clamp(1.75rem,4vw,3.5rem)}
+.foot .mark{margin-bottom:.75rem;display:block}
+.foot p,.foot a,.foot li{font-size:.875rem;color:var(--muted);line-height:1.75}
+.foot a:hover{color:var(--fg)}
+.foot h4{font-size:var(--fs-label);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:.875rem;font-family:var(--sans);font-weight:500}
+.foot__base{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;
+  margin-top:clamp(2.5rem,5vw,3.5rem);padding-top:1.5rem;border-top:1px solid var(--rule)}
+.foot__base p{font-size:.8125rem}
+
+/* ─────────────────────────────  RESPONSIVE  ───────────────────────────── */
+@media (max-width:1024px){
+  .hero__copy{grid-column:1/span 12}
+  .hero__media{grid-column:1/span 12;margin-top:clamp(2rem,5vw,3rem)}
+  .uses{grid-template-columns:repeat(2,1fr);gap:2rem}
+  .bulk__in{grid-template-columns:1fr}
+  .faq__head,.faq__list,.contact__head,.form,.prod__head,.uses__head{grid-column:1/span 12}
+  .faq__head,.contact__head{margin-bottom:clamp(2rem,4vw,3rem)}
+  .foot__grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:820px){
+  .nav__links{display:none}
+  .burger{display:flex}
+}
+@media (max-width:680px){
+  :root{--section-y:4rem}
+  /* 36px is fine for a mouse, short of the 44px touch minimum. */
+  .vid__pause{min-height:44px;padding:0 1rem}
+  .prods{grid-template-columns:1fr}
+  .uses{grid-template-columns:1fr;gap:1.5rem}
+  .bulk__stats{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .hero__actions .btn{flex:1 1 100%}
+  .foot__grid{grid-template-columns:1fr;gap:2rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-i18n="skip">Aller au contenu</a>
+
+<!-- ①  NAV -->
+<header class="nav" id="nav">
+  <div class="wrap nav__inner">
+    <a href="#" class="mark" aria-label="Bibo Saya Studio">Bibo Saya Studio</a>
+    <div class="nav__right">
+      <nav class="nav__links" aria-label="Navigation">
+        <a href="#produits" data-i18n="nav.products">Produits</a>
+        <a href="#usages" data-i18n="nav.uses">Usages</a>
+        <a href="#quantite" data-i18n="nav.bulk">Quantité</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <a href="#contact" class="btn btn--ghost nav__cta"><span data-i18n="nav.cta">Demander un prix</span></a>
+      </nav>
+      <div class="lang" role="group" id="langGroup">
+        <button type="button" data-lang="fr" aria-pressed="true" lang="fr">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+      <button class="burger" id="burger" aria-expanded="false" aria-controls="sheet" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="sheet" id="sheet">
+  <a href="#produits" data-i18n="nav.products">Produits</a>
+  <a href="#usages" data-i18n="nav.uses">Usages</a>
+  <a href="#quantite" data-i18n="nav.bulk">Quantité</a>
+  <a href="#faq" data-i18n="nav.faq">FAQ</a>
+  <a href="#contact" data-i18n="nav.cta">Demander un prix</a>
+</div>
+
+<main id="main">
+
+<!-- ②  HERO -->
+<section class="hero">
+  <div class="wrap grid">
+    <div class="hero__copy">
+      <p class="label" data-i18n="hero.eyebrow" style="margin-bottom:clamp(1.25rem,2.5vw,1.75rem)">
+        Cartes et étiquettes NFC · Vierges, prêtes à programmer
+      </p>
+
+      <h1 id="heroTitle">Des supports NFC <span class="em">à la hauteur</span> de votre système.</h1>
+
+      <p class="lead" data-i18n="hero.sub">Cartes noires mates et étiquettes blanches, livrées vierges et prêtes à être encodées. Pour le contrôle d'accès, les paiements, les badges de membre et l'inventaire. Compatibles avec les lecteurs RFID/NFC haute fréquence.</p>
+
+      <div class="hero__actions">
+        <a href="#contact" class="btn btn--solid"><span data-i18n="hero.cta1">Demander un prix</span></a>
+        <a href="#produits" class="btn btn--ghost"><span data-i18n="hero.cta2">Voir les produits</span></a>
+      </div>
+
+      <p class="label hero__note" data-i18n="hero.note">Cartes dès 35&nbsp;$ · Étiquettes dès 15&nbsp;$ · Rabais sur quantité</p>
+    </div>
+
+    <div class="hero__media">
+      <div class="vid" data-vid>
+        <video muted loop playsinline preload="none" width="1280" height="720"
+               data-src="media/video-b.mp4"
+               aria-label="Cartes NFC noires mates"></video>
+        <button class="vid__pause" type="button" data-vid-toggle aria-pressed="false">
+          <span data-i18n="vid.pause">Pause</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- ③  PRODUCTS -->
+<section id="produits">
+  <div class="wrap grid">
+    <div class="prod__head">
+      <div class="eyebrow"><span class="label" data-i18n="pd.eyebrow">01 — Produits</span><span class="rule"></span></div>
+      <h2 data-i18n="pd.head">Deux formats. Un seul standard de qualité.</h2>
+    </div>
+
+    <div class="prods">
+      <article class="prod" data-reveal>
+        <div class="vid" data-vid>
+          <video muted loop playsinline preload="none" width="1280" height="720"
+                 data-src="media/video-b.mp4"
+                 aria-label="Carte NFC noire mate"></video>
+          <button class="vid__pause" type="button" data-vid-toggle aria-pressed="false">
+            <span data-i18n="vid.pause">Pause</span>
+          </button>
+        </div>
+        <div class="prod__body">
+          <div class="prod__top">
+            <h3 data-i18n="pd.1.n">Carte NFC noire mate</h3>
+            <div>
+              <span class="prod__from" data-i18n="pd.from">à partir de</span>
+              <span class="prod__price" data-i18n="pd.1.p">35&nbsp;$</span>
+            </div>
+          </div>
+          <p class="prod__desc" data-i18n="pd.1.d">Finition mate qui ne garde pas les traces de doigts, et surface gravable au laser pour votre logo ou vos numéros de série.</p>
+          <ul class="prod__specs">
+            <li data-i18n="pd.1.s1">Puce RFID/NFC haute fréquence, vierge</li>
+            <li data-i18n="pd.1.s2">Format carte bancaire standard (85,6 × 54 mm)</li>
+            <li data-i18n="pd.1.s3">Surface mate gravable au laser</li>
+            <li data-i18n="pd.1.s4">Pour l'accès, le paiement et les badges</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="prod" data-reveal>
+        <div class="vid" data-vid>
+          <video muted loop playsinline preload="none" width="1280" height="720"
+                 data-src="media/video-a.mp4"
+                 aria-label="Étiquettes NFC blanches"></video>
+          <button class="vid__pause" type="button" data-vid-toggle aria-pressed="false">
+            <span data-i18n="vid.pause">Pause</span>
+          </button>
+        </div>
+        <div class="prod__body">
+          <div class="prod__top">
+            <h3 data-i18n="pd.2.n">Étiquette NFC blanche</h3>
+            <div>
+              <span class="prod__from" data-i18n="pd.from">à partir de</span>
+              <span class="prod__price" data-i18n="pd.2.p">15&nbsp;$</span>
+            </div>
+          </div>
+          <p class="prod__desc" data-i18n="pd.2.d">Étiquette ronde à coller, prête à encoder. Le format le plus simple pour ajouter un point de contact NFC là où vous en avez besoin.</p>
+          <ul class="prod__specs">
+            <li data-i18n="pd.2.s1">Puce NFC vierge, réinscriptible</li>
+            <li data-i18n="pd.2.s2">Face blanche imprimable</li>
+            <li data-i18n="pd.2.s3">Disponible en vrac ou en petite quantité</li>
+            <li data-i18n="pd.2.s4">Pour l'inventaire, l'automatisation et les points de contact</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- ④  USES -->
+<section id="usages">
+  <div class="wrap grid">
+    <div class="uses__head">
+      <div class="eyebrow"><span class="label" data-i18n="us.eyebrow">02 — Usages</span><span class="rule"></span></div>
+      <h2 data-i18n="us.head">Ce que nos clients en font.</h2>
+    </div>
+
+    <ul class="uses">
+      <li class="use" data-reveal>
+        <span class="use__n">01</span>
+        <h3 data-i18n="us.1.t">Contrôle d'accès</h3>
+        <p data-i18n="us.1.d">Portes de bureau, entrepôts, salles techniques. Une carte par employé, révocable en quelques secondes.</p>
+      </li>
+      <li class="use" data-reveal>
+        <span class="use__n">02</span>
+        <h3 data-i18n="us.2.t">Systèmes de paiement</h3>
+        <p data-i18n="us.2.d">Cartes prépayées, comptes clients, cantines et bars fermés.</p>
+      </li>
+      <li class="use" data-reveal>
+        <span class="use__n">03</span>
+        <h3 data-i18n="us.3.t">Badges de membre</h3>
+        <p data-i18n="us.3.d">Salles de sport, clubs, associations. Identification à l'entrée et suivi des présences.</p>
+      </li>
+      <li class="use" data-reveal>
+        <span class="use__n">04</span>
+        <h3 data-i18n="us.4.t">Inventaire et actifs</h3>
+        <p data-i18n="us.4.d">Étiquetez le matériel, les outils et les stocks. Un geste avec le téléphone suffit à l'identifier.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ⑤  BULK -->
+<section id="quantite" class="bulk">
+  <div class="wrap grid">
+    <div class="bulk__in">
+      <div>
+        <div class="eyebrow"><span class="label" data-i18n="bk.eyebrow">03 — Quantité</span><span class="rule"></span></div>
+        <h2 data-i18n="bk.head">Plus vous en commandez, moins ça coûte.</h2>
+        <p data-i18n="bk.d">Nous fournissons à l'unité comme en vrac. Dites-nous la quantité et l'usage prévu, et nous confirmons le prix exact avant toute commande. Aucun paiement n'est demandé avant votre accord.</p>
+      </div>
+      <div class="bulk__stats">
+        <div class="stat">
+          <b data-i18n="bk.s1n">HF</b>
+          <span data-i18n="bk.s1d">Puces haute fréquence, compatibles avec les lecteurs courants</span>
+        </div>
+        <div class="stat">
+          <b data-i18n="bk.s2n">Vierges</b>
+          <span data-i18n="bk.s2d">Livrées non encodées — vous gardez le contrôle des données</span>
+        </div>
+        <div class="stat">
+          <b data-i18n="bk.s3n">24&nbsp;h</b>
+          <span data-i18n="bk.s3d">Réponse à votre demande de prix en moins d'une journée</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- ⑥  FAQ -->
+<section id="faq">
+  <div class="wrap grid">
+    <div class="faq__head">
+      <div class="eyebrow"><span class="label" data-i18n="faq.eyebrow">04 — Questions</span><span class="rule"></span></div>
+      <h2 data-i18n="faq.head">Des réponses claires.</h2>
+    </div>
+
+    <div class="faq__list">
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a1" id="q1">
+          <span data-i18n="faq.1.q">Les cartes sont-elles déjà programmées&nbsp;?</span>
+          <span class="faq__ico" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a1" role="region" aria-labelledby="q1">
+          <p data-i18n="faq.1.a">Non, et c'est voulu. Elles arrivent vierges pour que vous les encodiez avec votre propre système — vos identifiants, vos données, votre contrôle. Si vous préférez qu'on s'en occupe, dites-le dans votre demande.</p>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a2" id="q2">
+          <span data-i18n="faq.2.q">Sont-elles compatibles avec mon lecteur&nbsp;?</span>
+          <span class="faq__ico" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a2" role="region" aria-labelledby="q2">
+          <p data-i18n="faq.2.a">Ce sont des puces haute fréquence, le standard des lecteurs NFC et RFID modernes. Envoyez-nous la marque et le modèle de votre lecteur dans le formulaire et nous confirmerons la compatibilité avant que vous commandiez quoi que ce soit.</p>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a3" id="q3">
+          <span data-i18n="faq.3.q">Quelle quantité minimum&nbsp;?</span>
+          <span class="faq__ico" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a3" role="region" aria-labelledby="q3">
+          <p data-i18n="faq.3.a">Il n'y en a pas. Nous fournissons aussi bien quelques pièces pour un test qu'une commande en vrac. Le prix par pièce baisse avec la quantité — précisez-la dans votre demande et nous vous enverrons le montant exact.</p>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a4" id="q4">
+          <span data-i18n="faq.4.q">Puis-je faire graver mon logo&nbsp;?</span>
+          <span class="faq__ico" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a4" role="region" aria-labelledby="q4">
+          <p data-i18n="faq.4.a">Oui. La surface mate des cartes noires se grave au laser, ce qui donne un marquage net et permanent — logo, nom, numéros de série. Les étiquettes blanches, elles, s'impriment. Envoyez votre fichier et nous vous dirons ce qui rend le mieux.</p>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a5" id="q5">
+          <span data-i18n="faq.5.q">Comment se passe la commande&nbsp;?</span>
+          <span class="faq__ico" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a5" role="region" aria-labelledby="q5">
+          <p data-i18n="faq.5.a">Vous remplissez le formulaire avec la quantité et l'usage. Nous répondons sous 24 heures avec le prix exact et le délai. Si cela vous convient, nous envoyons une facture par courriel — rien n'est prélevé avant votre accord.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- ⑦  CONTACT -->
+<section id="contact">
+  <div class="wrap grid">
+    <div class="contact__head">
+      <div class="eyebrow"><span class="label" data-i18n="ct.eyebrow">05 — Demander un prix</span><span class="rule"></span></div>
+      <h2 id="ctHead">Dites-nous ce qu'il vous <span class="em">faut</span>.</h2>
+      <p class="lead" data-i18n="ct.lead">Quantité, usage, modèle de lecteur si vous le connaissez. Réponse sous 24 heures avec un prix ferme.</p>
+      <p class="contact__note" data-i18n="ct.note">Aucun paiement maintenant. Nous confirmons le prix et le délai avant toute commande.</p>
+    </div>
+
+    <form class="form" id="leadForm" novalidate>
+      <div class="frow">
+        <div class="fld" data-field="fullName">
+          <label for="f-name" data-i18n="f.name">Nom complet</label>
+          <input id="f-name" name="fullName" type="text" autocomplete="name" required aria-describedby="e-name">
+          <span class="fld__err" id="e-name"></span>
+        </div>
+        <div class="fld" data-field="businessName">
+          <label for="f-biz" data-i18n="f.biz">Entreprise</label>
+          <input id="f-biz" name="businessName" type="text" autocomplete="organization" required aria-describedby="e-biz">
+          <span class="fld__err" id="e-biz"></span>
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fld" data-field="email">
+          <label for="f-email" data-i18n="f.email">Courriel</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email">
+          <span class="fld__err" id="e-email"></span>
+        </div>
+        <div class="fld" data-field="phone">
+          <label for="f-phone" data-i18n="f.phone">Téléphone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" required aria-describedby="e-phone">
+          <span class="fld__err" id="e-phone"></span>
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fld" data-field="product">
+          <label for="f-product" data-i18n="f.product">Produit</label>
+          <!-- option VALUES stay English so submitted data is stable in both
+               languages; only the visible labels are translated. -->
+          <select id="f-product" name="product" required aria-describedby="e-product">
+            <option value="" data-i18n="f.choose">Choisissez…</option>
+            <option value="Black NFC Cards" data-i18n="f.optCards">Cartes NFC noires</option>
+            <option value="White NFC Tags" data-i18n="f.optTags">Étiquettes NFC blanches</option>
+            <option value="Both" data-i18n="f.optBoth">Les deux</option>
+            <option value="Not sure" data-i18n="f.optUnsure">Je ne sais pas encore</option>
+          </select>
+          <span class="fld__err" id="e-product"></span>
+        </div>
+        <div class="fld" data-field="quantity">
+          <label for="f-qty" data-i18n="f.qty">Quantité approximative</label>
+          <input id="f-qty" name="quantity" type="text" inputmode="numeric" required aria-describedby="e-qty" placeholder="50, 500, 5000…">
+          <span class="fld__err" id="e-qty"></span>
+        </div>
+      </div>
+
+      <div class="fld" data-field="notes">
+        <label for="f-notes"><span data-i18n="f.notes">Usage prévu et modèle de lecteur</span> <span class="opt" data-i18n="f.optional">(facultatif)</span></label>
+        <textarea id="f-notes" name="notes" aria-describedby="e-notes"
+          data-i18n-attr="placeholder:f.notesPh"
+          placeholder="Contrôle d'accès, marque du lecteur, gravure du logo…"></textarea>
+        <span class="fld__err" id="e-notes"></span>
+      </div>
+
+      <!-- Honeypot: `_gotcha` is Formspree's built-in trap name. -->
+      <div class="trap" aria-hidden="true">
+        <label for="f-trap">Company URL</label>
+        <input id="f-trap" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button class="btn btn--solid" type="submit" id="submitBtn"><span data-i18n="f.send">Envoyer la demande</span></button>
+      <div class="note" id="formNote" role="status" aria-live="polite"></div>
+      <p class="form__fine" data-i18n="f.fine">Nous utilisons ces informations uniquement pour vous répondre. Pas de listes, pas de transfert, pas de marketing.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ⑧  FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <span class="mark">Bibo Saya Studio</span>
+        <p data-i18n="ft.tag">Cartes et étiquettes NFC vierges pour les systèmes d'accès, de paiement et de badges.</p>
+      </div>
+      <div>
+        <h4 data-i18n="ft.explore">Explorer</h4>
+        <ul>
+          <li><a href="#produits" data-i18n="nav.products">Produits</a></li>
+          <li><a href="#usages" data-i18n="nav.uses">Usages</a></li>
+          <li><a href="#quantite" data-i18n="nav.bulk">Quantité</a></li>
+          <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="ft.contact">Contact</h4>
+        <ul>
+          <li><a href="mailto:bibosayastudio@gmail.com">bibosayastudio@gmail.com</a></li>
+        </ul>
+        <p style="margin-top:.875rem">
+          <a class="tlink" href="https://princebibo.github.io/bilal-studio/" data-i18n="ft.other">Cartes d'avis Google &amp; création de sites &nearr;</a>
+        </p>
+      </div>
+    </div>
+    <div class="foot__base">
+      <p data-i18n="ft.base">Prix confirmés avant toute commande.</p>
+      <p>&copy; 2026 Bibo Saya Studio</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  /* ══════════════ CONFIGURATION ══════════════ */
+  const CONFIG = {
+    mode: 'formspree',
+    formspreeId: 'mgawykld',
+    apiBase: '',
+    fallbackEmail: 'bibosayastudio@gmail.com',
+    /* Both sites post to the same Formspree form, so every submission is
+       tagged with its origin — otherwise the two lead streams are
+       indistinguishable in one inbox. */
+    source: 'Site cartes NFC (bibo-saya-cards)',
+  };
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ══════════════ COPY ══════════════
+     French is the source of truth in the HTML; English lives here. */
+  const FR_MESSAGES = {
+    'f.sending': 'Envoi…',
+    'msg.ok': 'Merci — votre demande est bien reçue. Nous répondons sous 24 heures.',
+    'msg.fields': 'Veuillez vérifier les champs indiqués.',
+    'msg.rate': 'Trop de tentatives. Veuillez patienter quelques minutes.',
+    'msg.generic': "Une erreur s'est produite.",
+    'msg.network': 'Impossible de joindre le serveur.',
+    'msg.unconfigured': "Ce formulaire n'est pas encore connecté.",
+    'msg.mailto': 'Envoyer par courriel à la place',
+    'msg.required': 'Ce champ est obligatoire.',
+    'msg.email': 'Cette adresse courriel semble incorrecte.',
+    'vid.play': 'Lire',
+  };
+
+  const EN = {
+    docTitle: 'Bibo Saya Studio — Matte NFC cards & tags, ready to program',
+    docDesc: "Blank matte black NFC cards and white NFC tags, ready to encode. For access control, payments and member badges. From $15, bulk discounts available.",
+    skip: 'Skip to content',
+
+    'nav.products': 'Products', 'nav.uses': 'Uses', 'nav.bulk': 'Quantity',
+    'nav.faq': 'FAQ', 'nav.cta': 'Request a price',
+
+    'hero.eyebrow': 'NFC cards and tags · Blank, ready to program',
+    heroTitle: 'NFC blanks <span class="em">worthy of</span> your system.',
+    'hero.sub': 'Matte black cards and white tags, shipped blank and ready to encode. For access control, payments, member badges and inventory. Compatible with high-frequency RFID/NFC readers.',
+    'hero.cta1': 'Request a price', 'hero.cta2': 'See the products',
+    'hero.note': 'Cards from $35 · Tags from $15 · Bulk discounts',
+
+    'vid.pause': 'Pause',
+
+    'pd.eyebrow': '01 — Products',
+    'pd.head': 'Two formats. One standard of quality.',
+    'pd.from': 'from',
+    'pd.1.n': 'Matte black NFC card', 'pd.1.p': '$35',
+    'pd.1.d': 'A matte finish that does not hold fingerprints, and a laser-engravable surface for your logo or serial numbers.',
+    'pd.1.s1': 'Blank high-frequency RFID/NFC chip',
+    'pd.1.s2': 'Standard card format (85.6 × 54 mm)',
+    'pd.1.s3': 'Laser-engravable matte surface',
+    'pd.1.s4': 'For access, payment and badges',
+    'pd.2.n': 'White NFC tag', 'pd.2.p': '$15',
+    'pd.2.d': 'A round adhesive tag, ready to encode. The simplest way to add an NFC touchpoint exactly where you need one.',
+    'pd.2.s1': 'Blank, rewritable NFC chip',
+    'pd.2.s2': 'Printable white face',
+    'pd.2.s3': 'Available in bulk or small quantities',
+    'pd.2.s4': 'For inventory, automation and touchpoints',
+
+    'us.eyebrow': '02 — Uses',
+    'us.head': 'What our customers do with them.',
+    'us.1.t': 'Access control',
+    'us.1.d': 'Office doors, warehouses, server rooms. One card per employee, revocable in seconds.',
+    'us.2.t': 'Payment systems',
+    'us.2.d': 'Prepaid cards, customer accounts, canteens and closed bars.',
+    'us.3.t': 'Member badges',
+    'us.3.d': 'Gyms, clubs, associations. Identification at the door and attendance tracking.',
+    'us.4.t': 'Inventory and assets',
+    'us.4.d': 'Tag equipment, tools and stock. One tap with a phone identifies it.',
+
+    'bk.eyebrow': '03 — Quantity',
+    'bk.head': 'The more you order, the less it costs.',
+    'bk.d': 'We supply single units and bulk alike. Tell us the quantity and what it is for, and we confirm the exact price before any order. Nothing is charged until you agree.',
+    'bk.s1n': 'HF', 'bk.s1d': 'High-frequency chips, compatible with common readers',
+    'bk.s2n': 'Blank', 'bk.s2d': 'Shipped unencoded — you keep control of the data',
+    'bk.s3n': '24 h', 'bk.s3d': 'Your price request answered in under a day',
+
+    'faq.eyebrow': '04 — Questions', 'faq.head': 'Straight answers.',
+    'faq.1.q': 'Do the cards come pre-programmed?',
+    'faq.1.a': 'No, and that is deliberate. They arrive blank so you encode them with your own system — your credentials, your data, your control. If you would rather we handled it, say so in your request.',
+    'faq.2.q': 'Will they work with my reader?',
+    'faq.2.a': 'These are high-frequency chips, the standard for modern NFC and RFID readers. Send us the make and model of your reader in the form and we will confirm compatibility before you order anything.',
+    'faq.3.q': 'What is the minimum quantity?',
+    'faq.3.a': 'There is none. We supply a handful for testing just as readily as a bulk order. The unit price drops with quantity — put yours in the request and we will send the exact figure.',
+    'faq.4.q': 'Can I have my logo engraved?',
+    'faq.4.a': 'Yes. The matte surface of the black cards takes laser engraving, which gives a crisp permanent mark — logo, name, serial numbers. The white tags are printed instead. Send your file and we will tell you which suits it best.',
+    'faq.5.q': 'How does ordering work?',
+    'faq.5.a': 'You fill in the form with the quantity and the use. We reply within 24 hours with the exact price and lead time. If it suits you, we send an invoice by email — nothing is charged before you agree.',
+
+    'ct.eyebrow': '05 — Request a price',
+    ctHead: 'Tell us what you <span class="em">need</span>.',
+    'ct.lead': 'Quantity, use, and your reader model if you know it. A firm price within 24 hours.',
+    'ct.note': 'No payment now. We confirm the price and the lead time before any order.',
+
+    'f.name': 'Full name', 'f.biz': 'Company', 'f.email': 'Email', 'f.phone': 'Phone',
+    'f.product': 'Product', 'f.choose': 'Choose one…',
+    'f.optCards': 'Black NFC cards', 'f.optTags': 'White NFC tags',
+    'f.optBoth': 'Both', 'f.optUnsure': 'Not sure yet',
+    'f.qty': 'Approximate quantity',
+    'f.notes': 'Intended use and reader model', 'f.optional': '(optional)',
+    'f.notesPh': 'Access control, reader brand, logo engraving…',
+    'f.send': 'Send request', 'f.sending': 'Sending…',
+    'f.fine': 'We only use these details to reply to you. No lists, no forwarding, no marketing.',
+
+    'msg.ok': 'Thanks — your request is in. We will reply within 24 hours.',
+    'msg.fields': 'Please check the highlighted fields.',
+    'msg.rate': 'Too many attempts. Please wait a few minutes and try again.',
+    'msg.generic': 'Something went wrong.',
+    'msg.network': 'We could not reach the server.',
+    'msg.unconfigured': 'This form is not connected yet.',
+    'msg.mailto': 'Send it by email instead',
+    'msg.required': 'This field is required.',
+    'msg.email': 'That email address does not look right.',
+    'vid.play': 'Play',
+
+    'ft.tag': 'Blank NFC cards and tags for access, payment and badge systems.',
+    'ft.explore': 'Explore', 'ft.contact': 'Contact',
+    'ft.other': 'Google review cards & web design ↗',
+    'ft.base': 'Prices confirmed before any order.',
+  };
+
+  /* ══════════════ LANGUAGE ══════════════ */
+  const FR = {};
+  const heroTitle = document.getElementById('heroTitle');
+  const ctHead = document.getElementById('ctHead');
+  const metaDesc = document.getElementById('metaDesc');
+
+  document.querySelectorAll('[data-i18n]').forEach(function (el) { FR[el.dataset.i18n] = el.innerHTML; });
+  document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+    const parts = el.dataset.i18nAttr.split(':');
+    FR['attr:' + parts[1]] = el.getAttribute(parts[0]);
+  });
+  FR.heroTitle = heroTitle.innerHTML;
+  FR.ctHead = ctHead.innerHTML;
+  FR.docTitle = document.title;
+  FR.docDesc = metaDesc.getAttribute('content');
+  Object.assign(FR, FR_MESSAGES);
+
+  let lang = 'fr';
+  function t(key) {
+    if (lang === 'fr') return FR[key];
+    return EN[key] !== undefined ? EN[key] : FR[key];
+  }
+
+  function applyLang(next) {
+    lang = next === 'en' ? 'en' : 'fr';
+    const dict = lang === 'fr' ? FR : EN;
+
+    document.documentElement.lang = lang;
+    document.title = dict.docTitle || FR.docTitle;
+    metaDesc.setAttribute('content', dict.docDesc || FR.docDesc);
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      const v = dict[el.dataset.i18n];
+      if (v !== undefined) el.innerHTML = v;
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+      const parts = el.dataset.i18nAttr.split(':');
+      const v = lang === 'fr' ? FR['attr:' + parts[1]] : EN[parts[1]];
+      if (v !== undefined) el.setAttribute(parts[0], v);
+    });
+
+    heroTitle.innerHTML = dict.heroTitle || FR.heroTitle;
+    ctHead.innerHTML = dict.ctHead || FR.ctHead;
+
+    document.querySelectorAll('#langGroup button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
+    });
+    try { localStorage.setItem('bsc-lang', lang); } catch (e) { /* private mode */ }
+
+    /* Pause labels are rewritten by the loop above; restore the correct
+       state word for any video currently playing. */
+    document.querySelectorAll('[data-vid-toggle]').forEach(function (btn) {
+      const v = btn.closest('[data-vid]').querySelector('video');
+      btn.querySelector('span').textContent = v && v.paused ? t('vid.play') : t('vid.pause');
+    });
+  }
+
+  document.querySelectorAll('#langGroup button').forEach(function (b) {
+    b.addEventListener('click', function () { applyLang(b.dataset.lang); });
+  });
+
+  /* French is the default for everyone; English is opt-in and remembered.
+     No navigator.language sniffing — the site's primary language is French
+     and a crawler should see the same language as the HTML source. */
+  let saved = null;
+  try { saved = localStorage.getItem('bsc-lang'); } catch (e) { /* ignore */ }
+  if (saved === 'en') applyLang('en');
+
+  /* ══════════════ VIDEO ══════════════
+     Sources are attached only when a clip is near the viewport: two 2.4 MB
+     files would otherwise be pulled on page load, most of it over mobile
+     data, before anyone has scrolled to them.
+
+     Autoplay requires muted + playsinline. WCAG 2.2.2 requires a pause
+     control for anything that moves for more than five seconds, and these
+     loop forever — hence the button on every clip. Reduced-motion visitors
+     get a paused first frame instead. */
+  const vids = [...document.querySelectorAll('[data-vid]')];
+
+  function loadVideo(box) {
+    const v = box.querySelector('video');
+    if (!v || v.dataset.loaded) return;
+    v.dataset.loaded = '1';
+    v.src = v.dataset.src;
+    v.load();
+    if (!reduce) {
+      const p = v.play();
+      if (p && p.catch) p.catch(function () { /* autoplay refused; the control still works */ });
+    }
+    syncToggle(box);
+  }
+
+  function syncToggle(box) {
+    const v = box.querySelector('video');
+    const btn = box.querySelector('[data-vid-toggle]');
+    if (!v || !btn) return;
+    btn.querySelector('span').textContent = v.paused ? t('vid.play') : t('vid.pause');
+    btn.setAttribute('aria-pressed', String(v.paused));
+  }
+
+  vids.forEach(function (box) {
+    const v = box.querySelector('video');
+    const btn = box.querySelector('[data-vid-toggle]');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        if (!v.dataset.loaded) { loadVideo(box); return; }
+        if (v.paused) v.play(); else v.pause();
+        syncToggle(box);
+      });
+    }
+    if (v) {
+      v.addEventListener('play', function () { syncToggle(box); });
+      v.addEventListener('pause', function () { syncToggle(box); });
+    }
+  });
+
+  /* ══════════════ REVEAL + LAZY VIDEO ══════════════
+     Position is read from getBoundingClientRect on a plain scroll listener —
+     no requestAnimationFrame, which does not fire in a page the browser is
+     not compositing, and no IntersectionObserver, which some embedded
+     viewers stub out. Content must never depend on either to be visible. */
+  const pending = new Set(document.querySelectorAll('[data-reveal]'));
+  if (!reduce) {
+    pending.forEach(function (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = 'opacity .7s var(--ease), transform .7s var(--ease)';
+    });
+  }
+
+  let lastCheck = 0;
+  function checkViewport() {
+    const limit = window.innerHeight * 0.92;
+
+    pending.forEach(function (el) {
+      if (el.getBoundingClientRect().top < limit) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        pending.delete(el);
+      }
+    });
+
+    vids.forEach(function (box) {
+      const v = box.querySelector('video');
+      if (v && !v.dataset.loaded && box.getBoundingClientRect().top < window.innerHeight * 1.25) {
+        loadVideo(box);
+      }
+    });
+  }
+
+  function onScroll() {
+    const now = Date.now();
+    if (now - lastCheck < 80) return;
+    lastCheck = now;
+    checkViewport();
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  checkViewport();
+  setTimeout(checkViewport, 400);
+  setTimeout(checkViewport, 1500);
+
+  /* Last line of defence: nothing stays invisible because a reveal failed.
+     Losing an animation is acceptable; losing the product copy is not. */
+  setInterval(function () {
+    document.querySelectorAll('[data-reveal]').forEach(function (el) {
+      if (el.getBoundingClientRect().top >= window.innerHeight) return;
+      if (parseFloat(getComputedStyle(el).opacity) >= 0.99) return;
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }, 3000);
+
+  /* ══════════════ NAV + ACCORDION ══════════════ */
+  const nav = document.getElementById('nav');
+  function navState(y) { nav.classList.toggle('is-stuck', y > 70); }
+  navState(window.scrollY);
+  window.addEventListener('scroll', function () { navState(window.scrollY); }, { passive: true });
+
+  const burger = document.getElementById('burger');
+  const sheet = document.getElementById('sheet');
+  burger.addEventListener('click', function () {
+    const open = burger.getAttribute('aria-expanded') === 'true';
+    burger.setAttribute('aria-expanded', String(!open));
+    sheet.classList.toggle('is-open', !open);
+    document.body.style.overflow = !open ? 'hidden' : '';
+  });
+  sheet.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      burger.setAttribute('aria-expanded', 'false');
+      sheet.classList.remove('is-open');
+      document.body.style.overflow = '';
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && sheet.classList.contains('is-open')) burger.click();
+  });
+
+  document.querySelectorAll('.faq__q').forEach(function (btn) {
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    panel.style.height = '0px';
+    panel.style.transition = reduce ? 'none' : 'height .4s var(--ease)';
+    btn.addEventListener('click', function () {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      if (open) {
+        panel.style.height = panel.scrollHeight + 'px';
+        requestAnimationFrame(function () { panel.style.height = '0px'; });
+      } else {
+        panel.style.height = panel.scrollHeight + 'px';
+        setTimeout(function () { if (btn.getAttribute('aria-expanded') === 'true') panel.style.height = 'auto'; }, 420);
+      }
+    });
+  });
+
+  /* ══════════════ FORM ══════════════ */
+  const form = document.getElementById('leadForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitLabel = submitBtn.querySelector('span');
+  const formNote = document.getElementById('formNote');
+
+  const isConfigured = /^[A-Za-z0-9]{6,}$/.test(CONFIG.formspreeId)
+    && CONFIG.formspreeId !== 'YOUR_FORM_ID';
+
+  function clearErrors() {
+    form.querySelectorAll('.fld').forEach(function (f) {
+      f.classList.remove('fld--bad');
+      const i = f.querySelector('input, select, textarea');
+      if (i) i.removeAttribute('aria-invalid');
+      const s = f.querySelector('.fld__err');
+      if (s) s.textContent = '';
+    });
+    formNote.className = 'note';
+    formNote.innerHTML = '';
+  }
+
+  function showFieldErrors(fields) {
+    Object.keys(fields || {}).forEach(function (name) {
+      const wrap = form.querySelector('[data-field="' + name + '"]');
+      if (!wrap) return;
+      wrap.classList.add('fld--bad');
+      const i = wrap.querySelector('input, select, textarea');
+      if (i) i.setAttribute('aria-invalid', 'true');
+      const s = wrap.querySelector('.fld__err');
+      if (s) s.textContent = fields[name];
+    });
+    const first = form.querySelector('.fld--bad input, .fld--bad select, .fld--bad textarea');
+    if (first) first.focus();
+  }
+
+  function note(kind, message, extraHtml) {
+    formNote.className = 'note note--' + kind;
+    formNote.textContent = message;
+    if (extraHtml) formNote.insertAdjacentHTML('beforeend', ' ' + extraHtml);
+  }
+
+  function mailtoFallback(p) {
+    const L = lang === 'fr'
+      ? { n: 'Nom', b: 'Entreprise', e: 'Courriel', p: 'Téléphone', pr: 'Produit', q: 'Quantité', m: 'Message' }
+      : { n: 'Name', b: 'Company', e: 'Email', p: 'Phone', pr: 'Product', q: 'Quantity', m: 'Message' };
+    const body = [
+      L.n + ': ' + (p.fullName || ''), L.b + ': ' + (p.businessName || ''),
+      L.e + ': ' + (p.email || ''), L.p + ': ' + (p.phone || ''),
+      L.pr + ': ' + (p.product || ''), L.q + ': ' + (p.quantity || ''),
+      '', L.m + ': ' + (p.notes || ''),
+    ].join('\n');
+    const href = 'mailto:' + CONFIG.fallbackEmail
+      + '?subject=' + encodeURIComponent('Demande NFC — ' + (p.businessName || p.fullName || ''))
+      + '&body=' + encodeURIComponent(body);
+    return '<a href="' + href + '">' + t('msg.mailto') + '</a>';
+  }
+
+  function validateLocally(p) {
+    const errors = {};
+    ['fullName', 'businessName', 'phone', 'quantity'].forEach(function (k) {
+      if (!String(p[k] || '').trim()) errors[k] = t('msg.required');
+    });
+    if (!String(p.product || '').trim()) errors.product = t('msg.required');
+    const email = String(p.email || '').trim();
+    if (!email) errors.email = t('msg.required');
+    else if (!/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(email)) errors.email = t('msg.email');
+    return errors;
+  }
+
+  async function sendViaFormspree(payload) {
+    const res = await fetch('https://formspree.io/f/' + CONFIG.formspreeId, {
+      method: 'POST',
+      /* Accept: application/json is REQUIRED — without it Formspree answers
+         with an HTML redirect and this handler cannot read the result. */
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(Object.assign({}, payload, {
+        _subject: 'Demande NFC — ' + (payload.businessName || payload.fullName || ''),
+        source: CONFIG.source,
+      })),
+    });
+
+    let data = {};
+    try { data = await res.json(); } catch (e) { /* not JSON */ }
+    if (res.ok) return { ok: true };
+
+    /* Formspree has two error shapes and both must be handled: validation
+       as { errors: [...] }, configuration as a bare { error: "..." }.
+       Provider text is English-only, so it goes to the console and the
+       visitor gets the localised message. */
+    if (Array.isArray(data.errors) && data.errors.length) {
+      const fields = {};
+      data.errors.forEach(function (e) {
+        if (e.field) {
+          fields[e.field] = e.field === 'email' ? t('msg.email') : t('msg.required');
+          console.error('[form] Formspree field "' + e.field + '": ' + e.message);
+        } else {
+          console.error('[form] Formspree: ' + e.message);
+        }
+      });
+      const hasFields = Object.keys(fields).length > 0;
+      return { ok: false, fields: hasFields ? fields : null, error: hasFields ? t('msg.fields') : t('msg.generic') };
+    }
+    console.error('[form] Formspree ' + res.status + ': ' + (data.error || 'no error body'));
+    return { ok: false, error: t('msg.generic') };
+  }
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    clearErrors();
+
+    const payload = Object.fromEntries(new FormData(form).entries());
+
+    if (String(payload._gotcha || '').trim()) {   /* bot: pretend success */
+      note('ok', t('msg.ok'));
+      form.reset();
+      return;
+    }
+
+    const errs = validateLocally(payload);
+    if (Object.keys(errs).length) {
+      showFieldErrors(errs);
+      note('err', t('msg.fields'));
+      return;
+    }
+
+    if (!isConfigured) {
+      note('err', t('msg.unconfigured'), mailtoFallback(payload));
+      console.error('[form] Not configured: set CONFIG.formspreeId.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitLabel.textContent = t('f.sending');
+
+    try {
+      const result = await sendViaFormspree(payload);
+      if (result.ok) { note('ok', t('msg.ok')); form.reset(); return; }
+      if (result.fields) { showFieldErrors(result.fields); note('err', result.error); return; }
+      note('err', result.error, mailtoFallback(payload));
+    } catch (err) {
+      console.error('[form] request failed', err);
+      note('err', t('msg.network'), mailtoFallback(payload));
+    } finally {
+      submitBtn.disabled = false;
+      submitLabel.textContent = t('f.send');
+    }
+  });
+});
+</script>
+</body>
+</html>
